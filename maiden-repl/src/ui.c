@@ -153,15 +153,7 @@ void ui_crone_line(char *str) {
 }
 
 void ui_matron_line(char *str) {
-  // FIXME: sloppy way to handle this
-  if(strcmp(str, " <ok>\n") == 0) {
-    mvwprintw(sep_win, 0, 0, "<ok>");
-  } else if(strcmp(str, " <incomplete>\n") == 0) {
-    mvwprintw(sep_win, 0, 0, "<incomplete>");
-  } else {
-    mvwprintw(sep_win, 0, 0, "              ");
-    page_line(PAGE_MATRON, str);
-  }
+  page_line(PAGE_MATRON, str);
   wrefresh(sep_win);
 }
 
@@ -200,6 +192,9 @@ void handle_cmd(char *line)
     }
     switch( page_id() ) {
     case PAGE_MATRON:
+      ui_matron_line("> ");
+      ui_matron_line(line);
+      ui_matron_line("\n");
       io_send_line(IO_MATRON, line);
       break;
     case PAGE_CRONE:
