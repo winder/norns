@@ -113,14 +113,13 @@ cairo_surface_t *cairo_x11_surface_create() {
     int y = 64;
     int d = 8;
     Display *dpy;
-    Drawable da;
     int screen;
     cairo_surface_t *sfc;
 
     if ((dpy = XOpenDisplay(NULL)) == NULL)
         exit(1);
-    screen = DefaultScreen(dpy);
-    window = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
+    int screen = DefaultScreen(dpy);
+    Window window = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
         0, 0, x, y, 0, 0, 0);
     //XSelectInput(dsp, window, ButtonPressMask | KeyPressMask);
     XMapWindow(dpy, window);
