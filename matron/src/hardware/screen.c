@@ -129,10 +129,10 @@ cairo_surface_t *cairo_x11_surface_create() {
 
     XGCValues	    gcv;
     gcv.foreground = WhitePixel (dpy, screen);
-    Visual *visual = DefaultVisual(dpy, screen)
+    Visual *visual = DefaultVisual(dpy, screen);
     GC gc = XCreateGC (dpy, pix, GCForeground, &gcv);
 
-    Pixmap pix = XCreatePixmap(dpy,window, x, y, d)
+    Pixmap pix = XCreatePixmap(dpy,window, x, y, d);
     return cairo_xlib_surface_create(dpy, pix, visual, x, y);
 }
 
