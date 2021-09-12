@@ -126,7 +126,7 @@ cairo_surface_t *cairo_x11_surface_create() {
 
     sfc = cairo_x11_surface_create(dsp, da,
         DefaultVisual(dsp, screen), x, y);
-    cairo_xlib_surface_set_size(sfc, x, y);
+    //cairo__surface_set_size(sfc, x, y);
 
     return sfc;
 }
