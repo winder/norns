@@ -133,7 +133,7 @@ cairo_surface_t *cairo_x11_surface_create() {
 
 
     //XSelectInput(dsp, window, ButtonPressMask | KeyPressMask);
-    //XMapWindow(dpy, window);
+    XMapWindow(dpy, window);
 
     //sfc = cairo_x11_surface_create(dsp, window,
     //    DefaultVisual(dsp, screen), x, y);
