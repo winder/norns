@@ -114,13 +114,24 @@ cairo_surface_t *cairo_x11_surface_create() {
     int y = 64;
     int d = 8;
     Display *dpy;
+    XSetWindowAttributes    attr;
     //cairo_surface_t *sfc;
 
     if ((dpy = XOpenDisplay(NULL)) == NULL)
         exit(1);
     int screen = DefaultScreen(dpy);
-    Window window = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
-        0, 0, x, y, 0, 0, 0);
+    Visual *visual = DefaultVisual(dpy, screen);
+
+    //Window window = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
+    //    0, 0, x, y, 0, 0, 0);
+    Window window =  XCreateWindow (dpy, 0, x, y, x, y, 0,
+			 d, InputOutput,
+			 visual,
+ 			 0,
+			 &attr);
+
+
+
     //XSelectInput(dsp, window, ButtonPressMask | KeyPressMask);
     XMapWindow(dpy, window);
 
@@ -128,7 +139,6 @@ cairo_surface_t *cairo_x11_surface_create() {
     //    DefaultVisual(dsp, screen), x, y);
     //cairo__surface_set_size(sfc, x, y);
 
-    Visual *visual = DefaultVisual(dpy, screen);
     Pixmap pix = XCreatePixmap(dpy,window, x, y, d);
     //XGCValues	    gcv;
     //gcv.foreground = WhitePixel (dpy, screen);
