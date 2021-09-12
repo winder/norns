@@ -122,7 +122,7 @@ cairo_surface_t *cairo_linuxfb_surface_create() {
     device->fb_fd = open(fb_name, O_RDWR);
     if (device->fb_fd == -1) {
         fprintf(stderr, "ERROR (screen) cannot open framebuffer device: %s\n", fb_name);
-        perror("")
+        perror("");
         goto handle_allocate_error;
     }
 
