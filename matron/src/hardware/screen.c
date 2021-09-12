@@ -113,7 +113,6 @@ cairo_surface_t *cairo_x11_surface_create() {
     int y = 64;
     int d = 8;
     Display *dpy;
-    int screen;
     cairo_surface_t *sfc;
 
     if ((dpy = XOpenDisplay(NULL)) == NULL)
