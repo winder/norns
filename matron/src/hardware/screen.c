@@ -6,6 +6,7 @@
 
 #include <assert.h>
 #include <cairo-ft.h>
+#include <cairo-xlib.h>
 #include <cairo.h>
 #include <fcntl.h>
 #include <linux/fb.h>
