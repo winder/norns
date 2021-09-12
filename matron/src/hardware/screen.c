@@ -114,7 +114,7 @@ cairo_surface_t *cairo_x11_surface_create() {
     int y = 64;
     int d = 8;
     Display *dpy;
-    cairo_surface_t *sfc;
+    //cairo_surface_t *sfc;
 
     if ((dpy = XOpenDisplay(NULL)) == NULL)
         exit(1);
@@ -132,7 +132,7 @@ cairo_surface_t *cairo_x11_surface_create() {
     gcv.foreground = WhitePixel (dpy, screen);
     Visual *visual = DefaultVisual(dpy, screen);
     Pixmap pix = XCreatePixmap(dpy,window, x, y, d);
-    GC gc = XCreateGC (dpy, pix, GCForeground, &gcv);
+    //GC gc = XCreateGC (dpy, pix, GCForeground, &gcv);
     return cairo_xlib_surface_create(dpy, pix, visual, x, y);
 }
 
