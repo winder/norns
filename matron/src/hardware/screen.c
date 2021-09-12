@@ -105,6 +105,29 @@ void cairo_linuxfb_surface_destroy(void *device) {
     free(dev);
 }
 
+cairo_surface_t *cairo_x11_surface_create() {
+    int x = 128;
+    int y = 64;
+    Display *dsp;
+    Drawable da;
+    int screen;
+    cairo_surface_t *sfc;
+
+    if ((dsp = XOpenDisplay(NULL)) == NULL)
+        exit(1);
+    screen = DefaultScreen(dsp);
+    da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp),
+        0, 0, x, y, 0, 0, 0);
+    XSelectInput(dsp, da, ButtonPressMask | KeyPressMask);
+    XMapWindow(dsp, da);
+
+    sfc = cairo_xlib_surface_create(dsp, da,
+        DefaultVisual(dsp, screen), x, y);
+    cairo_xlib_surface_set_size(sfc, x, y);
+
+    return sfc;
+}
+
 /* Create a cairo surface using the specified framebuffer */
 cairo_surface_t *cairo_linuxfb_surface_create() {
     cairo_linuxfb_device_t *device;
@@ -186,7 +209,8 @@ void screen_display_png(const char *filename, double x, double y) {
 }
 
 void screen_init(void) {
-    surfacefb = cairo_linuxfb_surface_create();
+    //surfacefb = cairo_linuxfb_surface_create();
+    surfacefb = cairo_x11_surface_create();
     if (surfacefb == NULL) {
         return;
     }
