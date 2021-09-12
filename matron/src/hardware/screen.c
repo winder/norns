@@ -129,7 +129,6 @@ cairo_surface_t *cairo_linuxfb_surface_create() {
     // Get variable screen information
     if (ioctl(device->fb_fd, FBIOGET_VSCREENINFO, &device->fb_vinfo) == -1) {
         perror("ERROR (screen) reading variable information");
-        perror("")
         goto handle_ioctl_error;
     }
 
