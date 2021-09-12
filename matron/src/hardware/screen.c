@@ -125,14 +125,16 @@ cairo_surface_t *cairo_linuxfb_surface_create() {
         goto handle_allocate_error;
     }
 
+    /*
     // Get variable screen information
     if (ioctl(device->fb_fd, FBIOGET_VSCREENINFO, &device->fb_vinfo) == -1) {
         fprintf(stderr, "ERROR (screen) reading variable information\n");
         goto handle_ioctl_error;
     }
+    */
 
     // Figure out the size of the screen in bytes
-    device->fb_screensize = device->fb_vinfo.xres * device->fb_vinfo.yres * device->fb_vinfo.bits_per_pixel / 8;
+    device->fb_screensize = 128 * 64 * 8 / 8;
 
     // Map the device to memory
     device->fb_data =
@@ -143,16 +145,18 @@ cairo_surface_t *cairo_linuxfb_surface_create() {
         goto handle_ioctl_error;
     }
 
+    /*
     // Get fixed screen information
     if (ioctl(device->fb_fd, FBIOGET_FSCREENINFO, &device->fb_finfo) == -1) {
         fprintf(stderr, "ERROR (screen) reading fixed information\n");
         goto handle_ioctl_error;
     }
+    */
 
     /* Create the cairo surface which will be used to draw to */
     surface = cairo_image_surface_create_for_data(
-        device->fb_data, CAIRO_FORMAT_RGB16_565, device->fb_vinfo.xres, device->fb_vinfo.yres,
-        cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, device->fb_vinfo.xres));
+        device->fb_data, CAIRO_FORMAT_RGB16_565, 128, 64,
+        cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, 128));
     cairo_surface_set_user_data(surface, NULL, device, &cairo_linuxfb_surface_destroy);
 
     return surface;
