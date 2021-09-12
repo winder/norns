@@ -111,24 +111,31 @@ void cairo_linuxfb_surface_destroy(void *device) {
 cairo_surface_t *cairo_x11_surface_create() {
     int x = 128;
     int y = 64;
-    Display *dsp;
+    int d = 8;
+    Display *dpy;
     Drawable da;
     int screen;
     cairo_surface_t *sfc;
 
-    if ((dsp = XOpenDisplay(NULL)) == NULL)
+    if ((dpy = XOpenDisplay(NULL)) == NULL)
         exit(1);
-    screen = DefaultScreen(dsp);
-    da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp),
+    screen = DefaultScreen(dpy);
+    window = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
         0, 0, x, y, 0, 0, 0);
-    XSelectInput(dsp, da, ButtonPressMask | KeyPressMask);
-    XMapWindow(dsp, da);
+    //XSelectInput(dsp, window, ButtonPressMask | KeyPressMask);
+    XMapWindow(dpy, window);
 
-    sfc = cairo_x11_surface_create(dsp, da,
-        DefaultVisual(dsp, screen), x, y);
+    //sfc = cairo_x11_surface_create(dsp, window,
+    //    DefaultVisual(dsp, screen), x, y);
     //cairo__surface_set_size(sfc, x, y);
 
-    return sfc;
+    XGCValues	    gcv;
+    gcv.foreground = WhitePixel (dpy, screen);
+    Visual *visual = DefaultVisual(dpy, screen)
+    GC gc = XCreateGC (dpy, pix, GCForeground, &gcv);
+
+    Pixmap pix = XCreatePixmap(dpy,window, x, y, d)
+    return cairo_xlib_surface_create(dpy, pix, visual, x, y);
 }
 
 /* Create a cairo surface using the specified framebuffer */
