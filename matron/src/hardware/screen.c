@@ -20,6 +20,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
+#include <SDL2/SDL.h>
+
 
 #include "args.h"
 
@@ -119,7 +121,7 @@ void fullscreen(Display* dpy, Window win) {
   );
 }
 
-//cairo_surface_t *cairo_create_x11_surface0()
+// This version compiles, but we don't have access to the bitmap.
 cairo_surface_t *cairo_x11_surface_create()
 {
     fprintf(stdout, "creating surface...\n");
@@ -130,7 +132,6 @@ cairo_surface_t *cairo_x11_surface_create()
     Display *dsp;
     Drawable da;
     int screen;
-    cairo_surface_t *sfc;
 
     if ((dsp = XOpenDisplay(NULL)) == NULL) {
         fprintf(stderr, "XOpenDisplay error\n");
@@ -144,51 +145,81 @@ cairo_surface_t *cairo_x11_surface_create()
     XMapWindow(dsp, da);
     fullscreen(dsp, da);
 
-    sfc = cairo_xlib_surface_create(dsp, da,
+    surface = cairo_xlib_surface_create(dsp, da,
         DefaultVisual(dsp, screen), x, y);
-    cairo_xlib_surface_set_size(sfc, x, y);
+    cairo_xlib_surface_set_size(surface, x, y);
+
     fprintf(stdout, "surface created...\n");
 
-    return sfc;
+    return surface;
 }
+
+typedef struct _screen_sdl_priv {
+    SDL_Window *window;
+    SDL_Surface *window_surface;
+    SDL_Surface *draw_surface;
+} screen_sdl_priv_t;
+screen_sdl_priv_t priv;
+
 /*
-cairo_surface_t *cairo_x11_surface_create() {
+static void screen_sdl_surface_destroy(void *data) {
+    if (data == NULL) fprintf(stdout, "\n");
+    SDL_FreeSurface(priv.draw_surface);
+    SDL_DestroyWindow(priv.window);
+    //free(priv);
+}
+*/
+
+cairo_surface_t *cairo_sdl_surface_create() {
+
+    
     int x = 128;
     int y = 64;
     int d = 8;
-    Display *dpy;
-    XSetWindowAttributes    attr;
-    //cairo_surface_t *sfc;
-
-    if ((dpy = XOpenDisplay(NULL)) == NULL)
-        exit(1);
-    int screen = DefaultScreen(dpy);
-    Visual *visual = DefaultVisual(dpy, screen);
-
-    //Window window = XCreateSimpleWindow(dpy, DefaultRootWindow(dpy),
-    //    0, 0, x, y, 0, 0, 0);
-    Window window =  XCreateWindow (dpy, 0, x, y, x, y, 0,
-			 d, InputOutput,
-			 visual,
- 			 0,
-			 &attr);
+    SDL_Surface *sdlsurf = SDL_CreateRGBSurface (
+      0, x, y, d,
+      0,
+      0,
+      0,
+      0);
+    if (sdlsurf == NULL) {
+      perror("SDL_CreateRGBSurface");
+      return NULL;
+    }
 
 
+    surface = cairo_image_surface_create_for_data (
+        sdlsurf->pixels,
+        CAIRO_FORMAT_RGB24,
+        sdlsurf->w,
+        sdlsurf->h,
+        sdlsurf->pitch);
+    //cairo_surface_set_user_data(surface, NULL, NULL, &screen_sdl_surface_destroy);
+    
 
-    //XSelectInput(dsp, window, ButtonPressMask | KeyPressMask);
-    XMapWindow(dpy, window);
+    // From pr #1221
+    /*
+    SDL_Init(SDL_INIT_VIDEO);
+    priv.window = SDL_CreateWindow("matron",
+                                    SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,                                 128, 64,
+                                    SDL_WINDOW_SHOWN | SDL_WINDOW_ALLOW_HIGHDPI);
+    priv.window_surface = SDL_GetWindowSurface(priv.window);
 
-    //sfc = cairo_x11_surface_create(dsp, window,
-    //    DefaultVisual(dsp, screen), x, y);
-    //cairo__surface_set_size(sfc, x, y);
 
-    Pixmap pix = XCreatePixmap(dpy,window, x, y, d);
-    //XGCValues	    gcv;
-    //gcv.foreground = WhitePixel (dpy, screen);
-    //GC gc = XCreateGC (dpy, pix, GCForeground, &gcv);
-    return cairo_xlib_surface_create(dpy, pix, visual, x, y);
+    priv.draw_surface = SDL_CreateRGBSurface(0,
+                                              128, 64,
+                                              16, 0xf800, 0x000007e0, 0x0000001f,
+                                              0);
+    surface = cairo_image_surface_create_for_data((unsigned char *)priv.draw_surface->pixels,
+                                                  CAIRO_FORMAT_RGB16_565, priv.draw_surface->w, priv.draw_surface->h,
+                                                  cairo_format_stride_for_width(CAIRO_FORMAT_RGB16_565, priv.draw_surface->w));
+    cairo_surface_set_user_data(surface, NULL, NULL, &screen_sdl_surface_destroy);
+
+    SDL_FillRect(priv.draw_surface, NULL, SDL_MapRGB(priv.draw_surface->format, 0xFF, 0x0F, 0xFF));
+    SDL_UpdateWindowSurface(priv.window);
+    */
+    return surface;
 }
-*/
 
 /* Create a cairo surface using the specified framebuffer */
 cairo_surface_t *cairo_linuxfb_surface_create() {
@@ -272,7 +303,8 @@ void screen_display_png(const char *filename, double x, double y) {
 
 void screen_init(void) {
     //surfacefb = cairo_linuxfb_surface_create();
-    surfacefb = cairo_x11_surface_create();
+    //surfacefb = cairo_x11_surface_create();
+    surfacefb = cairo_sdl_surface_create();
     if (surfacefb == NULL) {
         return;
     }

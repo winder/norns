@@ -229,7 +229,7 @@ static void handle_event(union event_data *ev) {
         w_handle_hid_event(ev->hid_event.id, ev->hid_event.type, ev->hid_event.code, ev->hid_event.value);
         break;
     case EVENT_MIDI_ADD:
-        w_handle_midi_add(ev->midi_add.dev);
+        //w_handle_midi_add(ev->midi_add.dev);
         break;
     case EVENT_MIDI_REMOVE:
         w_handle_midi_remove(ev->midi_remove.id);
