@@ -122,8 +122,11 @@ cairo_surface_t *cairo_x11_surface_create()
     int screen;
     cairo_surface_t *sfc;
 
-    if ((dsp = XOpenDisplay(NULL)) == NULL)
+    if ((dsp = XOpenDisplay(NULL)) == NULL) {
+        fprintf(stderr, "XOpenDisplay error");
+        perror("XOpenDisplay");
         exit(1);
+    }
     screen = DefaultScreen(dsp);
     da = XCreateSimpleWindow(dsp, DefaultRootWindow(dsp),
         0, 0, x, y, 0, 0, 0);
