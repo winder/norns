@@ -109,10 +109,20 @@ void cairo_linuxfb_surface_destroy(void *device) {
     free(dev);
 }
 
+void fullscreen(Display* dpy, Window win) {
+  Atom atoms[2] = { XInternAtom(dpy, "_NET_WM_STATE_FULLSCREEN", False), None };
+  XChangeProperty(
+      dpy, 
+      win, 
+      XInternAtom(dpy, "_NET_WM_STATE", False),
+      XA_ATOM, 32, PropModeReplace, (unsigned char*)atoms, 1
+  );
+}
+
 //cairo_surface_t *cairo_create_x11_surface0()
 cairo_surface_t *cairo_x11_surface_create()
 {
-    fprintf(stderr, "creating surface...");
+    fprintf(stdout, "creating surface...\n");
     int x = 128;
     int y = 64;
     //int d = 8;
@@ -123,7 +133,7 @@ cairo_surface_t *cairo_x11_surface_create()
     cairo_surface_t *sfc;
 
     if ((dsp = XOpenDisplay(NULL)) == NULL) {
-        fprintf(stderr, "XOpenDisplay error");
+        fprintf(stderr, "XOpenDisplay error\n");
         perror("XOpenDisplay");
         exit(1);
     }
@@ -132,11 +142,12 @@ cairo_surface_t *cairo_x11_surface_create()
         0, 0, x, y, 0, 0, 0);
     XSelectInput(dsp, da, ButtonPressMask | KeyPressMask);
     XMapWindow(dsp, da);
+    fullscreen(dsp, da);
 
     sfc = cairo_xlib_surface_create(dsp, da,
         DefaultVisual(dsp, screen), x, y);
     cairo_xlib_surface_set_size(sfc, x, y);
-    fprintf(stderr, "surface created...");
+    fprintf(stdout, "surface created...\n");
 
     return sfc;
 }
