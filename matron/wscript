@@ -42,7 +42,7 @@ def build(bld):
     ]
 
     matron_libs = [
-        'x11',
+        'X11',
         'pthread',
         'm',
     ]
