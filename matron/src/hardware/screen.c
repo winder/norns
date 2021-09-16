@@ -112,7 +112,7 @@ void cairo_linuxfb_surface_destroy(void *device) {
 //cairo_surface_t *cairo_create_x11_surface0()
 cairo_surface_t *cairo_x11_surface_create()
 {
-    fprintf(stdout, "creating surface...");
+    fprintf(stderr, "creating surface...");
     int x = 128;
     int y = 64;
     //int d = 8;
@@ -136,7 +136,7 @@ cairo_surface_t *cairo_x11_surface_create()
     sfc = cairo_xlib_surface_create(dsp, da,
         DefaultVisual(dsp, screen), x, y);
     cairo_xlib_surface_set_size(sfc, x, y);
-    fprintf(stdout, "surface created...");
+    fprintf(stderr, "surface created...");
 
     return sfc;
 }
