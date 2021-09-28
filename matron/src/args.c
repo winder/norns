@@ -17,7 +17,7 @@ static struct args a = {
     .loc_port = "8888",
     .ext_port = "57120",
     .crone_port = "9999",
-    .remote_port = "10111"
+    .remote_port = "10111",
     .framebuffer = "/dev/fb0",
 };
 
